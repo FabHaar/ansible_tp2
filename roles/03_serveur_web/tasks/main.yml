@@ -1,0 +1,155 @@
+root@debian:~/ansible-lab# cat roles/serveur-web/tasks/main.yml
+---
+- name: Installer NGINX (Debian/Ubuntu)
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Installer NGINX (RedHat/CentOS)
+  yum:
+    name: nginx
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: S'assurer que NGINX est démarré et activé (Debian)
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  when: ansible_os_family == "Debian"
+
+- name: S'assurer que NGINX est démarré et activé (RedHat)
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Créer une page d'accueil personnalisée (Debian)
+  copy:
+    dest: /var/www/html/index.nginx-debian.html
+    content: |
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <title>TP Ansible - Gestion de parc</title>
+        <style>
+          body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+          }
+          h1 {
+            color: #2c3e50;
+            font-size: 36px;
+          }
+          h2 {
+            color: #34495e;
+            font-weight: normal;
+          }
+          p {
+            font-size: 20px;
+            color: #2d3436;
+            margin-top: 30px;
+          }
+          footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Bienvenue sur le serveur NGINX</h1>
+        <h2>TP : Gestion d'un parc de machines virtuelles avec Ansible</h2>
+        <p><strong>{{ mot_phare }}</strong></p>
+        <footer>
+          Réalisé par Laurent Juhasz - {{ ansible_date_time.date }}
+        </footer>
+      </body>
+      </html>
+  notify: Redémarrer NGINX
+  when: ansible_os_family == "Debian"
+
+- name: Créer une page d'accueil personnalisée (RedHat)
+  copy:
+    dest: /usr/share/nginx/html/index.html
+    content: |
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <title>TP Ansible - Gestion de parc</title>
+        <style>
+          body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+          }
+          h1 {
+            color: #2c3e50;
+            font-size: 36px;
+          }
+          h2 {
+            color: #34495e;
+            font-weight: normal;
+          }
+          p {
+            font-size: 20px;
+            color: #2d3436;
+            margin-top: 30px;
+          }
+          footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Bienvenue sur le serveur NGINX</h1>
+        <h2>TP : Gestion d'un parc de machines virtuelles avec Ansible</h2>
+        <p><strong>{{ mot_phare }}</strong></p>
+        <footer>
+          Réalisé par Laurent Juhasz - {{ ansible_date_time.date }}
+        </footer>
+      </body>
+      </html>
+  notify: Redémarrer NGINX
+  when: ansible_os_family == "RedHat"
+
+- name: Vérifier que le service NGINX est actif
+  service_facts:
+
+- name: Afficher l'état du service NGINX
+  debug:
+    msg: "NGINX est bien actif sur {{ inventory_hostname }}"
+  when: ansible_facts.services['nginx.service'].state == 'running'
+
+- name: Vérifier que le port 80 est ouvert (NGINX)
+  wait_for:
+    port: 80
+    host: "{{ ansible_host | default(inventory_hostname) }}"
+    timeout: 5
+  register: nginx_port
+- name: Affichage de l'état du port
+  debug:
+    msg: "Le port 80 est bien ouvert sur {{ inventory_hostname }}"
+
+- name: Vérifier la page d'accueil NGINX
+  uri:
+    url: "http://{{ inventory_hostname }}"
+    return_content: yes
+  register: result
+
+- name: Vérifier que la réponse contient le mot phare
+  assert:
+    that:
+      - result.content is search(mot_phare)
+    fail_msg: "La page ne contient pas le mot phare attendu : {{ mot_phare }}"
+    success_msg: "La page contient bien le mot phare : {{ mot_phare }}"
