@@ -1,0 +1,5 @@
+---
+- name: déploiement des serveurs web
+  hosts: serveur_web
+  roles:
+  - 03_serveur_web

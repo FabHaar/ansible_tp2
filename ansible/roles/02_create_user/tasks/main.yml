@@ -1,0 +1,21 @@
+---
+- name: Créer le groupe
+  group:
+    name: Fabien
+    state: present
+    
+- name: créer l'utilisateur
+  user:
+    name: Fabien
+    group: Fabien
+    create_home: yes
+    shell: /bin/bash
+    state: present
+    
+- name: créer un fichier de bienvenue
+  copy:
+    dest: /home/Fabien/coucou.txt
+    content: "Coucou Fabien par ansible"
+    owner: Fabien
+    group: Fabien
+    mode: '0644'

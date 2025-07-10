@@ -1,0 +1,21 @@
+---
+
+- name: Afficher le nom de la machine
+  debug:
+    msg: "Nom de la machine : {{ ansible_hostname }}"
+
+- name: Afficher le version de l'OS
+  debug:
+    msg: "OS : {{ ansible_distribution }} {{ ansible_distribution_version }}"
+    
+- name: Afficher la version du noyau
+  debug:
+    msg: "Kernel : {{ ansible_kernel }}"
+
+- name: Afficher les adresses IPs
+  debug:
+    msg: "IPs : {{ ansible_all_ipv4_addresses }}"
+
+- name: Afficher la version de python
+  debug:
+    msg: "Version de python utilisé : {{ ansible_python.version.major }}.{{ ansible_python.version.minor }}.{{ ansible_python.version.micro }}"

@@ -1,0 +1,5 @@
+---
+- name: déploiement des SGBD
+  hosts: serveur_bdd
+  roles:
+  - 04_serveur_bdd

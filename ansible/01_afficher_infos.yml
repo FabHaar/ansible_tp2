@@ -1,0 +1,5 @@
+---
+- name: Afficher les infos systèmes
+  hosts: servers
+  roles:
+  - 01_infos

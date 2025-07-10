@@ -1,0 +1,5 @@
+---
+- name: créer un utilisateurs et vérifie sa présence
+  hosts: servers
+  roles:
+  - 02_create_user
