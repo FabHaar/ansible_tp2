@@ -32,7 +32,7 @@ resource "proxmox_virtual_environment_container" "centos_container_211" {
   }
 
   operating_system {
-    template_file_id = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+    template_file_id = "local:vztmpl/centos-9-stream-default_20240828_amd64.tar.zst"
     type             = "centos"
   }
 
