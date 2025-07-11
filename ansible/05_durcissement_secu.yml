@@ -1,0 +1,18 @@
+---
+- name: durcissement secu
+  hosts: servers
+  collections:
+  - devsec.hardening
+  
+  tasks:
+    - name: os hardening
+      ansible.builtin.import_role:
+        name: os_hardening
+        
+    - name: ssh hardening
+      ansible.builtin.import_role:
+        name: ssh_hardening
+
+    - name: nginx hardening
+      ansible.builtin.import_role:
+        name: nginx_hardening

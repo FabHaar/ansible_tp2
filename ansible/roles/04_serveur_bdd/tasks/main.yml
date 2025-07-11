@@ -11,3 +11,34 @@
     name: mariadb-server
     state: present
   when: ansible_os_family == "RedHat"
+
+- name: Autoriser le port 3306 (Debian)
+  ufw:
+    rule: allow
+    port: 3306
+    proto: tcp
+  when: ansible_os_family == "Debian"
+  
+- name: Autorise le port 3306 (Redhat)
+  firewalld:
+    port: 3306/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Créer la bdd
+  community.mysql.mysql_db:
+    name: "{{ mariadb_database }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    
+- name: Créer l'utilisateur avec droits dur le LAN
+  community.mysql.mysql_user:
+    name: "{{ mariadb_database }}"
+    password: "{{ mariadb_password }}"
+    host: "{{ mariadb_network }}"
+    priv: "{{ mariadb_database }}.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    

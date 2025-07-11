@@ -3,3 +3,9 @@
   hosts: serveur_bdd
   roles:
   - 04_serveur_bdd
+  vars:
+    mariadb_user: maria
+    mariadb_password: maria
+    mariadb_database: dbm
+    mariadb_network: 10.0.1.%
+    
